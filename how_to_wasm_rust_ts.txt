@@ -1,4 +1,5 @@
 
+(install npm at node js download)
 
 npm create vite@latest diatomic-molecule-simulation-widget --template vanilla-ts
 
