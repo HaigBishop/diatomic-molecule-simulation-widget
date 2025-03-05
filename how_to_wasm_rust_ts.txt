@@ -1,0 +1,28 @@
+
+
+npm create vite@latest diatomic-molecule-simulation-widget --template vanilla-ts
+
+cargo install wasm-pack
+
+mkdir wasm-crate
+
+cd wasm-crate
+
+cargo init --lib
+
+wasm-pack build --target web --out-dir ../public/wasm
+
+npm install
+
+npm run dev
+
+
+
+///////// MAIN STUFF
+wasm-pack build --target web --out-dir ../public/wasm
+
+npm install
+
+npm run dev
+
+
