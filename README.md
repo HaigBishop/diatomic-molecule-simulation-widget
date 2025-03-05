@@ -5,7 +5,7 @@
 
 ### Rust Components
 
- - simulate function 
+ - simulate (function)
      - inputs: 
         - duration
         - element parameters (e.g. mass, force constant)
@@ -13,8 +13,8 @@
         - time step
         - temperature
      - outputs: 
-        - displacements over time
-        - energies over time
+        - simulation data 
+            - displacements and energies over time
         - plots of energies and displacements over time
             - axis labels
             - sensible axis ticks
@@ -31,7 +31,7 @@
 
 ### UI Outputs
 
-  - plot of energie over time
+  - plot of energy over time
      - axis labels
      - sensible axis ticks
      - automatic title

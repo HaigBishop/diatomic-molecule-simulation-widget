@@ -19,9 +19,12 @@ npm run dev
 
 
 ///////// MAIN STUFF
+
+cd wasm-crate
+
 wasm-pack build --target web --out-dir ../public/wasm
 
-npm install
+cd ..
 
 npm run dev
 
