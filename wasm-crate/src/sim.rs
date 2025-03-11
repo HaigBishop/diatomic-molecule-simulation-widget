@@ -207,7 +207,8 @@ impl SimulationState {
 #[derive(Serialize)]
 pub struct SimulationResult {
     pub times: Vec<f64>,
-    pub positions: Vec<f64>,
+    pub displacements: Vec<f64>,
+    pub distances: Vec<f64>,
     pub potential_energies: Vec<f64>,
     pub kinetic_energies: Vec<f64>,
     pub total_energies: Vec<f64>,
@@ -246,7 +247,8 @@ pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
 fn simulate_harmonic_oscillator(mut state: SimulationState, params: &SimulationParameters) -> SimulationResult {
     // Initialize vectors to store simulation data
     let mut times = Vec::new();
-    let mut positions = Vec::new();
+    let mut displacements = Vec::new();
+    let mut distances = Vec::new();
     let mut potential_energies = Vec::new();
     let mut kinetic_energies = Vec::new();
     let mut total_energies = Vec::new();
@@ -262,7 +264,8 @@ fn simulate_harmonic_oscillator(mut state: SimulationState, params: &SimulationP
     
     // Store initial state
     times.push(state.time as f64);
-    positions.push(state.displacement as f64);
+    displacements.push(state.displacement as f64);
+    distances.push(state.displacement as f64);
     potential_energies.push(state.potential_e as f64);
     kinetic_energies.push(state.kinetic_e as f64);
     total_energies.push(state.total_e as f64);
@@ -294,15 +297,22 @@ fn simulate_harmonic_oscillator(mut state: SimulationState, params: &SimulationP
         
         // Store data
         times.push(state.time as f64);
-        positions.push(state.displacement as f64);
+        displacements.push(state.displacement as f64);
+        distances.push(state.displacement as f64);
         potential_energies.push(state.potential_e as f64);
         kinetic_energies.push(state.kinetic_e as f64);
         total_energies.push(state.total_e as f64);
     }
+
+    // Temporary fix to ensure distances are positive (add 1.1 * abs(min_distance) to all distances)
+    let min_distance = distances.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+    let offset = if min_distance < 0.0 { 1.1 * min_distance.abs() } else { 0.0 };
+    distances.iter_mut().for_each(|d| *d += offset);
     
     SimulationResult {
         times,
-        positions,
+        displacements,
+        distances,
         potential_energies,
         kinetic_energies,
         total_energies,
@@ -312,7 +322,8 @@ fn simulate_harmonic_oscillator(mut state: SimulationState, params: &SimulationP
 fn simulate_morse_potential(mut state: SimulationState, params: &SimulationParameters) -> SimulationResult {
     // Initialize vectors to store simulation data
     let mut times = Vec::new();
-    let mut positions = Vec::new();
+    let mut displacements = Vec::new();
+    let mut distances = Vec::new();
     let mut potential_energies = Vec::new();
     let mut kinetic_energies = Vec::new();
     let mut total_energies = Vec::new();
@@ -328,7 +339,8 @@ fn simulate_morse_potential(mut state: SimulationState, params: &SimulationParam
     
     // Store initial state
     times.push(state.time as f64);
-    positions.push(state.displacement as f64);
+    displacements.push(state.displacement as f64);
+    distances.push(state.displacement as f64);
     potential_energies.push(state.potential_e as f64);
     kinetic_energies.push(state.kinetic_e as f64);
     total_energies.push(state.total_e as f64);
@@ -363,15 +375,22 @@ fn simulate_morse_potential(mut state: SimulationState, params: &SimulationParam
         
         // Store data
         times.push(state.time as f64);
-        positions.push(state.displacement as f64);
+        displacements.push(state.displacement as f64);
+        distances.push(state.displacement as f64);
         potential_energies.push(state.potential_e as f64);
         kinetic_energies.push(state.kinetic_e as f64);
         total_energies.push(state.total_e as f64);
     }
+
+    // Temporary fix to ensure distances are positive (add 1.1 * abs(min_distance) to all distances)
+    let min_distance = distances.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+    let offset = if min_distance < 0.0 { 1.1 * min_distance.abs() } else { 0.0 };
+    distances.iter_mut().for_each(|d| *d += offset);
     
     SimulationResult {
         times,
-        positions,
+        displacements,
+        distances,
         potential_energies,
         kinetic_energies,
         total_energies,
@@ -381,7 +400,8 @@ fn simulate_morse_potential(mut state: SimulationState, params: &SimulationParam
 fn simulate_lennard_jones(mut state: SimulationState, params: &SimulationParameters) -> SimulationResult {
     // Initialize vectors to store simulation data
     let mut times = Vec::new();
-    let mut positions = Vec::new();
+    let mut displacements = Vec::new();
+    let mut distances = Vec::new();
     let mut potential_energies = Vec::new();
     let mut kinetic_energies = Vec::new();
     let mut total_energies = Vec::new();
@@ -397,7 +417,8 @@ fn simulate_lennard_jones(mut state: SimulationState, params: &SimulationParamet
     
     // Store initial state
     times.push(state.time as f64);
-    positions.push(state.displacement as f64);
+    displacements.push(state.displacement as f64);
+    distances.push(state.displacement as f64);
     potential_energies.push(state.potential_e as f64);
     kinetic_energies.push(state.kinetic_e as f64);
     total_energies.push(state.total_e as f64);
@@ -433,15 +454,22 @@ fn simulate_lennard_jones(mut state: SimulationState, params: &SimulationParamet
         
         // Store data
         times.push(state.time as f64);
-        positions.push(state.displacement as f64);
+        displacements.push(state.displacement as f64);
+        distances.push(state.displacement as f64);
         potential_energies.push(state.potential_e as f64);
         kinetic_energies.push(state.kinetic_e as f64);
         total_energies.push(state.total_e as f64);
     }
+
+    // Temporary fix to ensure distances are positive (add 1.1 * abs(min_distance) to all distances)
+    let min_distance = distances.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+    let offset = if min_distance < 0.0 { 1.1 * min_distance.abs() } else { 0.0 };
+    distances.iter_mut().for_each(|d| *d += offset);
     
     SimulationResult {
         times,
-        positions,
+        displacements,
+        distances,
         potential_energies,
         kinetic_energies,
         total_energies,

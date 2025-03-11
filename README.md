@@ -2,6 +2,12 @@
 # 1D Diatomic Simulation
 *(diatomic-molecule-simulation-widget)*
 
+## Next To Do
+ - Make animation distances accurate
+ - Make plots nicer (e.g. different titles, int x-axis)
+ - Fill in missing element properties
+ - Read over code carefully
+
 
 ### Rust Components
 

@@ -42,7 +42,7 @@ pub fn render_energy_plot(result: &SimulationResult, canvas_id: &str) -> Result<
     
     // Create a chart context
     let mut chart = ChartBuilder::on(&root)
-        .caption("Energy vs Time", ("sans-serif", 20).into_font())
+        .caption("Energy Over Time", ("sans-serif", 20).into_font())
         .margin(10)
         .x_label_area_size(40)
         .y_label_area_size(60)
@@ -53,6 +53,8 @@ pub fn render_energy_plot(result: &SimulationResult, canvas_id: &str) -> Result<
     chart.configure_mesh()
         .x_desc("Time")
         .y_desc("Energy")
+        .x_labels(20)
+        .x_label_formatter(&|x| format!("{}", x.floor() as i32))
         .draw()
         .map_err(|e| JsValue::from_str(&format!("Cannot draw mesh: {}", e)))?;
     
@@ -119,8 +121,8 @@ pub fn render_displacement_plot(result: &SimulationResult, canvas_id: &str) -> R
     
     // Find min and max values for setting up chart scales
     let max_time = result.times.iter().fold(0.0, |a, &b| f64::max(a, b));
-    let min_position = result.positions.iter().fold(0.0, |a, &b| f64::min(a, b));
-    let max_position = result.positions.iter().fold(0.0, |a, &b| f64::max(a, b));
+    let min_position = result.displacements.iter().fold(0.0, |a, &b| f64::min(a, b));
+    let max_position = result.displacements.iter().fold(0.0, |a, &b| f64::max(a, b));
     
     // Add a bit of padding to the min/max values
     let y_range = max_position - min_position;
@@ -129,7 +131,7 @@ pub fn render_displacement_plot(result: &SimulationResult, canvas_id: &str) -> R
     
     // Create a chart context
     let mut chart = ChartBuilder::on(&root)
-        .caption("Displacement vs Time", ("sans-serif", 20).into_font())
+        .caption("Displacement Over Time", ("sans-serif", 20).into_font())
         .margin(10)
         .x_label_area_size(40)
         .y_label_area_size(60)
@@ -140,12 +142,14 @@ pub fn render_displacement_plot(result: &SimulationResult, canvas_id: &str) -> R
     chart.configure_mesh()
         .x_desc("Time")
         .y_desc("Displacement")
+        .x_labels(20)
+        .x_label_formatter(&|x| format!("{}", x.floor() as i32))
         .draw()
         .map_err(|e| JsValue::from_str(&format!("Cannot draw mesh: {}", e)))?;
     
     // Draw the position data
     chart.draw_series(LineSeries::new(
-        result.times.iter().zip(&result.positions).map(|(&x, &y)| (x, y)),
+        result.times.iter().zip(&result.displacements).map(|(&x, &y)| (x, y)),
         BLUE.filled()
     ))
     .map_err(|e| JsValue::from_str(&format!("Cannot draw position series: {}", e)))?;

@@ -10,6 +10,13 @@ class SimulationUI {
     private timestepInput: HTMLInputElement;
     private temperatureInput: HTMLInputElement;
     
+    // Animation properties
+    private animationCanvas: HTMLCanvasElement;
+    private animationContext: CanvasRenderingContext2D | null;
+    private animationFrameId: number | null = null;
+    private simulationResult: any = null;
+    private animationStartTime: number = 0;
+    
     constructor() {
         // Get references to all UI elements
         this.modelSelect = document.getElementById('model') as HTMLSelectElement;
@@ -17,6 +24,8 @@ class SimulationUI {
         this.durationInput = document.getElementById('duration') as HTMLInputElement;
         this.timestepInput = document.getElementById('timestep') as HTMLInputElement;
         this.temperatureInput = document.getElementById('temperature') as HTMLInputElement;
+        this.animationCanvas = document.getElementById('animation-canvas') as HTMLCanvasElement;
+        this.animationContext = this.animationCanvas.getContext('2d');
         
         // Set up all the UI controls
         this.setupControls();
@@ -61,6 +70,7 @@ class SimulationUI {
         if (this.modelSelect) {
             this.modelSelect.addEventListener('change', () => {
                 console.log('Selected model:', this.modelSelect.value);
+                this.validateModelElementCombination('model');
                 this.runSimulation();
             });
         }
@@ -68,8 +78,53 @@ class SimulationUI {
         if (this.elementSelect) {
             this.elementSelect.addEventListener('change', () => {
                 console.log('Selected element:', this.elementSelect.value);
+                this.validateModelElementCombination('element');
                 this.runSimulation();
             });
+        }
+    }
+    
+    // Method to validate and adjust model-element combinations
+    private validateModelElementCombination(changedInput: 'model' | 'element') {
+        const model = this.modelSelect.value;
+        const element = this.elementSelect.value;
+        
+        // Validation rules:
+        // - harmonic: any element is valid
+        // - morse: only H is valid
+        // - LJ: only Hg and Ar are valid
+        
+        if (changedInput === 'model') {
+            // User changed the model, adjust element if needed
+            if (model === 'morse' && element !== 'H') {
+                console.log('Morse model only supports H, adjusting element');
+                this.elementSelect.value = 'H';
+            } else if (model === 'lennard-jones' && element !== 'Hg' && element !== 'Ar') {
+                console.log('LJ model only supports Hg and Ar, adjusting element');
+                this.elementSelect.value = 'Ar'; // Default to Ar for LJ model
+            }
+            // For harmonic model, any element is valid, so no adjustment needed
+        } else {
+            // User changed the element, adjust model if needed
+            if (element === 'H') {
+                // H works with harmonic and morse, no need to change if model is already one of these
+                if (model !== 'harmonic' && model !== 'morse') {
+                    console.log('Element H requires harmonic or morse model, adjusting model');
+                    this.modelSelect.value = 'harmonic'; // Default to harmonic
+                }
+            } else if (element === 'Hg' || element === 'Ar') {
+                // Hg and Ar work with harmonic and LJ
+                if (model !== 'harmonic' && model !== 'lennard-jones') {
+                    console.log('Element Hg/Ar requires harmonic or LJ model, adjusting model');
+                    this.modelSelect.value = 'harmonic'; // Default to harmonic
+                }
+            } else {
+                // Any other element only works with harmonic
+                if (model !== 'harmonic') {
+                    console.log('This element only supports harmonic model, adjusting model');
+                    this.modelSelect.value = 'harmonic';
+                }
+            }
         }
     }
     
@@ -98,18 +153,174 @@ class SimulationUI {
             const result = simulate_and_plot(
                 params, 
                 'energy-canvas',
-                'displacement-canvas'//,
-                // 'animation-canvas'
+                'displacement-canvas'
             );
             
             console.log('Simulation completed:', result);
             
-            // Additional JS handling of the result could go here
-            // For example, if you want to do additional processing of the data
+            // Store the simulation result and start the animation
+            this.simulationResult = result;
+            this.startAnimation();
             
         } catch (error) {
             console.error('Error running simulation:', error);
         }
+    }
+    
+    // Start the animation loop
+    private startAnimation() {
+        // Cancel any existing animation
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        
+        // Reset start time
+        this.animationStartTime = performance.now();
+        
+        // Start the animation loop
+        this.animateAtoms();
+    }
+    
+    // Animation loop for atoms
+    private animateAtoms() {
+        if (!this.simulationResult || !this.animationContext) return;
+        
+        const ctx = this.animationContext;
+        const canvas = this.animationCanvas;
+        const distances = this.simulationResult.distances;
+        const times = this.simulationResult.times;
+        
+        // Calculate the maximum absolute distance to scale the axis
+        const maxAbsDistance = Math.max(...distances.map(Math.abs)) * 1.1; // Add 10% padding
+        
+        // Animation timing
+        const animationDuration = 10000; // 10 seconds in ms
+        const currentTime = performance.now();
+        const elapsedTime = currentTime - this.animationStartTime;
+        const animationProgress = (elapsedTime % animationDuration) / animationDuration;
+        
+        // Calculate index in the simulation data
+        const dataIndex = Math.min(
+            Math.floor(animationProgress * distances.length),
+            distances.length - 1
+        );
+        
+        // Get current distance and convert to positions
+        const currentDistance = distances[dataIndex];
+        const atom1Position = -currentDistance / 2;
+        const atom2Position = currentDistance / 2;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Set canvas scaling and transformations
+        const padding = 40; // Padding for axis labels
+        const axisY = canvas.height / 2;
+        const scaleX = (canvas.width - padding * 2) / (maxAbsDistance * 2);
+        
+        // Draw axis
+        ctx.beginPath();
+        ctx.moveTo(padding, axisY);
+        ctx.lineTo(canvas.width - padding, axisY);
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Draw tick marks and labels
+        this.drawAxisTicks(ctx, axisY, padding, canvas.width - padding, maxAbsDistance, scaleX);
+        
+        // Draw atoms
+        this.drawAtom(ctx, padding + (maxAbsDistance + atom1Position) * scaleX, axisY, '#646cff');
+        this.drawAtom(ctx, padding + (maxAbsDistance + atom2Position) * scaleX, axisY, '#646cff');
+        
+        // Draw time indicator
+        ctx.fillStyle = '#444';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Time: ${times[dataIndex].toFixed(2)} fs`, canvas.width - padding, 20);
+        
+        // Continue animation loop
+        this.animationFrameId = requestAnimationFrame(() => this.animateAtoms());
+    }
+    
+    // Helper to draw an atom
+    private drawAtom(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
+        const radius = 6;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+    
+    // Helper to draw axis ticks and labels
+    private drawAxisTicks(
+        ctx: CanvasRenderingContext2D, 
+        axisY: number, 
+        leftX: number, 
+        rightX: number, 
+        maxValue: number,
+        scaleX: number
+    ) {
+        const axisWidth = rightX - leftX;
+        const centerX = leftX + axisWidth / 2;
+        
+        // Draw center line (position 0)
+        ctx.beginPath();
+        ctx.moveTo(centerX, axisY - 5);
+        ctx.lineTo(centerX, axisY + 5);
+        ctx.strokeStyle = '#888';
+        ctx.stroke();
+        
+        ctx.fillStyle = '#444';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('0', centerX, axisY + 20);
+        
+        // Calculate reasonable tick intervals based on max value
+        const tickInterval = this.calculateTickInterval(maxValue);
+        
+        // Draw positive ticks
+        for (let value = tickInterval; value <= maxValue; value += tickInterval) {
+            const x = centerX + value * scaleX;
+            ctx.beginPath();
+            ctx.moveTo(x, axisY - 5);
+            ctx.lineTo(x, axisY + 5);
+            ctx.stroke();
+            ctx.fillText(value.toFixed(1), x, axisY + 20);
+        }
+        
+        // Draw negative ticks
+        for (let value = -tickInterval; value >= -maxValue; value -= tickInterval) {
+            const x = centerX + value * scaleX;
+            ctx.beginPath();
+            ctx.moveTo(x, axisY - 5);
+            ctx.lineTo(x, axisY + 5);
+            ctx.stroke();
+            ctx.fillText(value.toFixed(1), x, axisY + 20);
+        }
+        
+        // Draw axis label
+        ctx.fillText('Position (Å)', centerX, axisY + 40);
+    }
+    
+    // Helper to calculate reasonable tick intervals
+    private calculateTickInterval(maxValue: number): number {
+        const idealTickCount = 5; // We want about 5 ticks on each side
+        let interval = maxValue / idealTickCount;
+        
+        // Round to a nice number
+        const magnitude = Math.pow(10, Math.floor(Math.log10(interval)));
+        const normalized = interval / magnitude;
+        
+        if (normalized < 1.5) {
+            interval = magnitude;
+        } else if (normalized < 3.5) {
+            interval = 2 * magnitude;
+        } else {
+            interval = 5 * magnitude;
+        }
+        
+        return interval;
     }
 }
 

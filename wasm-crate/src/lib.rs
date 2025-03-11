@@ -18,8 +18,7 @@ pub use sim::SimulationParameters;
 pub fn simulate_and_plot(
     params: SimulationParameters,
     energy_canvas_id: &str,
-    displacement_canvas_id: &str//,
-    // animation_canvas_id: &str
+    displacement_canvas_id: &str
 ) -> Result<JsValue, JsValue> {
     // 1. Run simulation based on parameters
     let result = sim::simulate_molecule(&params);
@@ -30,10 +29,7 @@ pub fn simulate_and_plot(
     // 3. Render displacement plot
     plt::render_displacement_plot(&result, displacement_canvas_id)?;
     
-    // 4. Prepare animation data
-    // Either render animation frames or return data for JS to animate
-    
-    // 5. Return simulation data to JavaScript
+    // 4. Return simulation data to JavaScript for animation
     Ok(to_value(&result)?)
 }
 
