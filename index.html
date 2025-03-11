@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/style.css">
     <title>Diatomic Molecule Simulation</title>
   </head>
   <body>
     <div id="app">
       <h1>Diatomic Simulation</h1>
-      <p>A simple interactive tool to simulate diatomic molecules in 1D</p>
+      <p class="subtitle">A simple interactive tool to simulate diatomic molecules in 1D</p>
       <div class="controls">
         <div class="control-group">
           <label for="model">Model:</label>
@@ -35,19 +35,19 @@
 
         <div class="control-group">
           <label for="duration">Duration:</label>
-          <input type="range" id="duration" min="1000" max="1000000" value="10000">
+          <input type="range" id="duration" min="1000" max="420000" value="2000" step="100">
           <span class="value-display" id="duration-value"></span>
         </div>
 
         <div class="control-group">
           <label for="timestep">Time Step:</label>
-          <input type="range" id="timestep" min="1" max="100" value="10">
+          <input type="range" id="timestep" min="0.1" max="100.0" value="2.0" step="0.1">
           <span class="value-display" id="timestep-value"></span>
         </div>
 
         <div class="control-group">
           <label for="temperature">Temperature (K):</label>
-          <input type="range" id="temperature" min="50" max="1000" value="300">
+          <input type="range" id="temperature" min="50" max="1000" value="300" step="1">
           <span class="value-display" id="temperature-value"></span>
         </div>
       </div>

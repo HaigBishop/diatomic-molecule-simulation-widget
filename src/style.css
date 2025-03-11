@@ -88,3 +88,9 @@ h1 {
   height: 300px;
   border: 1px solid #ccc;
 }
+
+.subtitle {
+  font-style: italic;
+  font-weight: 180;
+  font-size: 1.1rem;
+}
