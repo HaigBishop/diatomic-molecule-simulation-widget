@@ -5,16 +5,14 @@
 
 ### Rust Components
 
- - simulate (function)
+ - simulate_and_plot (function)
      - inputs: 
         - duration
         - element parameters (e.g. mass, force constant)
         - model
         - time step
         - temperature
-     - outputs: 
-        - simulation data 
-            - displacements and energies over time
+     - outputs:
         - plots of energies and displacements over time
             - axis labels
             - sensible axis ticks

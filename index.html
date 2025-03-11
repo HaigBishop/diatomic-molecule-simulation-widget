@@ -53,9 +53,15 @@
       </div>
 
       <div class="visualization">
-        <div id="animation-container"></div>
-        <div id="energy-plot"></div>
-        <div id="displacement-plot"></div>
+        <div id="animation-container">
+          <canvas id="animation-canvas" width="600" height="200"></canvas>
+        </div>
+        <div id="energy-plot">
+          <canvas id="energy-canvas" width="600" height="300"></canvas>
+        </div>
+        <div id="displacement-plot">
+          <canvas id="displacement-canvas" width="600" height="300"></canvas>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/index.ts"></script>
