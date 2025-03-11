@@ -23,10 +23,17 @@ npm run dev
 
 cd wasm-crate
 
+// Compile Rust wasm
 wasm-pack build --target web --out-dir ../public/wasm
 
 cd ..
 
+// Run app
 npm run dev
+
+(added commands to scripts in package.json)
+
+// Compile Rust wasm AND run app
+npm run start 
 
 

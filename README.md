@@ -1,5 +1,5 @@
 
-# 1D Diatomic Molecule Simulation
+# 1D Diatomic Simulation
 *(diatomic-molecule-simulation-widget)*
 
 
@@ -51,4 +51,4 @@
  - https://plotters-rs.github.io/wasm-demo/www/index.html
  - https://crates.io/crates/plotters
  - https://github.com/plotters-rs/plotters
-
+ - https://github.com/plotters-rs/plotters/blob/a212c30a17f0c44f683b44adb096bba3bae21ae5/README.md

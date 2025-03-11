@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 /wasm-crate/target
+/src/index0.ts
+/src/style0.css

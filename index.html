@@ -4,10 +4,60 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css">
+    <title>Diatomic Molecule Simulation</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <h1>Diatomic Simulation</h1>
+      <p>A simple interactive tool to simulate diatomic molecules in 1D</p>
+      <div class="controls">
+        <div class="control-group">
+          <label for="model">Model:</label>
+          <select id="model">
+            <option value="harmonic">Harmonic Oscillator</option>
+            <option value="morse">Morse Potential</option>
+            <option value="lennard-jones">Lennard-Jones</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="element">Element:</label>
+          <select id="element">
+            <option value="H">Hydrogen (H)</option>
+            <option value="Ar">Argon (Ar)</option>
+            <option value="Hg">Mercury (Hg)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="duration">Duration:</label>
+          <input type="range" id="duration" min="1000" max="1000000" value="10000">
+          <span class="value-display" id="duration-value"></span>
+        </div>
+
+        <div class="control-group">
+          <label for="timestep">Time Step:</label>
+          <input type="range" id="timestep" min="1" max="100" value="10">
+          <span class="value-display" id="timestep-value"></span>
+        </div>
+
+        <div class="control-group">
+          <label for="temperature">Temperature (K):</label>
+          <input type="range" id="temperature" min="50" max="1000" value="300">
+          <span class="value-display" id="temperature-value"></span>
+        </div>
+      </div>
+
+      <div class="visualization">
+        <div id="animation-container"></div>
+        <div id="energy-plot"></div>
+        <div id="displacement-plot"></div>
+      </div>
+    </div>
     <script type="module" src="/src/index.ts"></script>
   </body>
 </html>
