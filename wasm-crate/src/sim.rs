@@ -1,6 +1,25 @@
+/*
+Modules for simulation of diatomic molecules
+
+Contains:
+ - ElementProperties struct: 
+    - predefined elements (e.g. H, Hg, Ar) and their properties
+ - SimulationParameters struct:
+    - parameters for running a simulation, such as model type, element, duration, timestep, and temperature
+ - SimulationState struct:
+    - current state of the simulation, including time, displacement, force, acceleration, velocity, and energies
+ - SimulationResult struct:
+    - results of the simulation, including time series data for displacements, distances, and energies
+ - simulate_molecule function:
+    - orchestrates the simulation process by selecting the appropriate model based on parameters
+    - calls one of:
+        - simulate_harmonic_oscillator function
+        - simulate_morse_potential function
+        - simulate_lennard_jones function
+*/
+
 use wasm_bindgen::prelude::*;
 use serde::Serialize;
-
 
 // Conversion factors and constants
 const KB: f32 = 1.3806488E-23;
@@ -24,6 +43,7 @@ pub struct ElementProperties {
 
 // Define constants for all supported elements
 const ELEMENT_PROPERTIES: &[(&str, ElementProperties)] = &[
+    // Hydrogen
     ("H", ElementProperties {
         m_au: 9.114400E+02,
         k_au: 3.665358E-01,
@@ -35,6 +55,7 @@ const ELEMENT_PROPERTIES: &[(&str, ElementProperties)] = &[
         rstr_au: 0.0,
         eps_au: 0.0,
     }),
+    // Mercury
     ("Hg", ElementProperties {
         m_au: 1.840841E+05,
         k_au: 1.374407E-03,
@@ -46,6 +67,7 @@ const ELEMENT_PROPERTIES: &[(&str, ElementProperties)] = &[
         rstr_au: 6.952302E+00,
         eps_au: 1.845314E-03,
     }),
+    // Argon
     ("Ar", ElementProperties {
         m_au: 3.641021E+04,
         k_au: 3.232914E-04,
@@ -67,16 +89,14 @@ fn get_element_properties(element: &str) -> Option<ElementProperties> {
         .map(|(_, props)| *props)
 }
 
-
-
-// Define parameter struct
+// Define parameter struct for simulation settings
 #[wasm_bindgen]
 pub struct SimulationParameters {
-    model: String,
-    element: String,
-    duration: f64,
-    timestep: f64,
-    temperature: f64,
+    model: String,     // Model type (e.g., "harmonic", "morse", "lennard-jones")
+    element: String,   // Element symbol (e.g., "H", "Hg", "Ar")
+    duration: f64,     // Duration of the simulation
+    timestep: f64,     // Time step for the simulation
+    temperature: f64,  // Temperature for the simulation
 }
 
 #[wasm_bindgen]
@@ -119,21 +139,21 @@ impl SimulationParameters {
     }
 }
 
-
-
+// Structure to represent the current state of the simulation
 #[derive(Clone)]
 pub struct SimulationState {
-    pub time: f32,
-    pub displacement: f32,
-    pub force: f32,
-    pub acceleration: f32,
-    pub velocity: f32,
-    pub kinetic_e: f32,
-    pub potential_e: f32,
-    pub total_e: f32,
+    pub time: f32,          // Current time in the simulation
+    pub displacement: f32,  // Current displacement from equilibrium
+    pub force: f32,         // Current force acting on the molecule
+    pub acceleration: f32,  // Current acceleration of the molecule
+    pub velocity: f32,      // Current velocity of the molecule
+    pub kinetic_e: f32,     // Current kinetic energy
+    pub potential_e: f32,   // Current potential energy
+    pub total_e: f32,       // Total energy (kinetic + potential)
 }
 
 impl SimulationState {
+    // Initialize state for harmonic oscillator model
     pub fn init_harmonic_oscillator(properties: ElementProperties, temperature: f64) -> SimulationState {
         // Calculate the initial displacement based on temperature
         let r0_si_harm: f32 = ((2.0 * KB * temperature as f32) / properties.k_si).sqrt();
@@ -151,6 +171,7 @@ impl SimulationState {
         }
     }
 
+    // Initialize state for Morse potential model
     pub fn init_morse_potential(properties: ElementProperties, temperature: f64) -> SimulationState {
         // Calculate initial displacements
         let r0_si_harm: f32 = ((2.0 * KB * temperature as f32) / properties.k_si).sqrt();
@@ -174,6 +195,7 @@ impl SimulationState {
         }
     }
 
+    // Initialize state for Lennard-Jones potential model
     pub fn init_lennard_jones(properties: ElementProperties, temperature: f64) -> SimulationState {
         // Calculate initial displacements
         let r0_si_harm: f32 = ((2.0 * KB * temperature as f32) / properties.k_si).sqrt();
@@ -201,22 +223,18 @@ impl SimulationState {
     }
 }
 
-
-
 // Define result struct for time series data
 #[derive(Serialize)]
 pub struct SimulationResult {
-    pub times: Vec<f64>,
-    pub displacements: Vec<f64>,
-    pub distances: Vec<f64>,
-    pub potential_energies: Vec<f64>,
-    pub kinetic_energies: Vec<f64>,
-    pub total_energies: Vec<f64>,
+    pub times: Vec<f64>,             // Time points of the simulation
+    pub displacements: Vec<f64>,     // Displacements at each time point
+    pub distances: Vec<f64>,         // Distances at each time point
+    pub potential_energies: Vec<f64>,// Potential energies at each time point
+    pub kinetic_energies: Vec<f64>,  // Kinetic energies at each time point
+    pub total_energies: Vec<f64>,    // Total energies at each time point
 }
 
-
-
-// Placeholder function to generate synthetic simulation data
+// Function to generate synthetic simulation data
 pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
     // Get properties for the selected element
     let properties = get_element_properties(&params.element())
@@ -244,6 +262,7 @@ pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
     sim_result
 }
 
+// Function to simulate the harmonic oscillator model
 fn simulate_harmonic_oscillator(mut state: SimulationState, params: &SimulationParameters) -> SimulationResult {
     // Initialize vectors to store simulation data
     let mut times = Vec::new();
@@ -319,6 +338,7 @@ fn simulate_harmonic_oscillator(mut state: SimulationState, params: &SimulationP
     }
 }
 
+// Function to simulate the Morse potential model
 fn simulate_morse_potential(mut state: SimulationState, params: &SimulationParameters) -> SimulationResult {
     // Initialize vectors to store simulation data
     let mut times = Vec::new();
@@ -397,6 +417,7 @@ fn simulate_morse_potential(mut state: SimulationState, params: &SimulationParam
     }
 }
 
+// Function to simulate the Lennard-Jones potential model
 fn simulate_lennard_jones(mut state: SimulationState, params: &SimulationParameters) -> SimulationResult {
     // Initialize vectors to store simulation data
     let mut times = Vec::new();

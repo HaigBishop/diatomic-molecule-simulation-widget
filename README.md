@@ -3,9 +3,21 @@
 *(diatomic-molecule-simulation-widget)*
 
 ## Next To Do
+ - Debug frozen animation 
+ - Read over code carefully and understand 
+ - Ensure proper error handling within the Rust module
+ - Add clear instructions on how to build and run the application
+...
  - Make animation distances accurate
  - Fill in missing element properties
- - Read over code carefully
+
+
+
+
+
+
+
+
 
 
 ### Rust Components

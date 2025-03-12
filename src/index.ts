@@ -1,4 +1,22 @@
-// Import the WebAssembly initialization function and exported types/functions
+/**
+ * Molecular Dynamics Simulation Interface
+ * 
+ * This module provides a TypeScript interface for a molecular dynamics simulation
+ * powered by Rust WebAssembly. It handles:
+ * 
+ * - User interface controls for simulation parameters (model, element, duration, etc.)
+ * - Simulation parameter validation and management
+ * - Execution of simulations via WebAssembly
+ * - Visualization of simulation results through:
+ *   - Energy plots (handled by Rust/WASM)
+ *   - Displacement plots (handled by Rust/WASM)
+ *   - Animated atom visualization (handled by JavaScript)
+ * 
+ * The simulation supports different potential energy models (Harmonic, Morse, Lennard-Jones)
+ * and different elements (H, Hg, Ar) with validation to ensure valid combinations.
+ */
+
+// Import Rust WebAssembly for simulation and plotting (+ wasm initialization function)  
 import init, { simulate_and_plot, SimulationParameters } from "../public/wasm/wasm_crate.js";
 
 // Main class to handle the simulation UI and interactions

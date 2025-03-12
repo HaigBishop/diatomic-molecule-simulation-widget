@@ -1,3 +1,4 @@
+/* Root styles for font and color scheme */
 :root {
   font-family: 'Ubuntu', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,15 +14,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* The body element */
 body {
   margin: 0;
   display: flex;
@@ -30,11 +23,20 @@ body {
   min-height: 100vh;
 }
 
+/* Main heading */
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
+/* Subtitle */
+.subtitle {
+  font-style: italic;
+  font-weight: 180;
+  font-size: 1.1rem;
+}
+
+/* The main app container */
 #app {
   max-width: 1280px;
   margin: 0 auto;
@@ -42,6 +44,7 @@ h1 {
   text-align: center;
 }
 
+/* Control section layout */
 .controls {
   display: flex;
   flex-direction: column;
@@ -51,25 +54,30 @@ h1 {
   margin: 2rem auto;
 }
 
+/* Individual control groups */
 .control-group {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
+/* abels within control groups */
 .control-group label {
   min-width: 120px;
   text-align: right;
 }
 
+/* Range input within control groups */
 .control-group input[type="range"] {
   flex: 1;
 }
 
+/* Value display elements */
 .value-display {
   min-width: 60px;
 }
 
+/* Visualization section layout */
 .visualization {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -77,20 +85,16 @@ h1 {
   margin-top: 2rem;
 }
 
+/* Animation container */
 #animation-container {
   grid-column: 1 / -1;
   height: 200px;
   border: 1px solid #ccc;
 }
 
+/* Energy and displacement plots */
 #energy-plot,
 #displacement-plot {
   height: 300px;
   border: 1px solid #ccc;
-}
-
-.subtitle {
-  font-style: italic;
-  font-weight: 180;
-  font-size: 1.1rem;
 }

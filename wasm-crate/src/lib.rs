@@ -1,19 +1,29 @@
-mod sim;
-mod plt;
+/*
+Main library module for the WebAssembly simulation and plotting of diatomic molecules.
+
+Contains:
+ - Re-exports:
+    - SimulationParameters struct from the sim module for use in JavaScript
+ - Main function:
+    - simulate_and_plot: orchestrates the simulation and plotting process
+        - Takes simulation parameters and canvas IDs for energy and displacement plots
+        - Runs the simulation using the sim module
+        - Renders energy and displacement plots using the plt module
+        - Returns simulation results to JavaScript for further use
+*/
 
 use wasm_bindgen::prelude::*;
 use serde_wasm_bindgen::to_value;
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
+// Module for simulation
+mod sim;
+// Module for plotting
+mod plt;
 
-// Re-export the SimulationParameters struct
+// Re-export the SimulationParameters struct to be used from JavaScript
 pub use sim::SimulationParameters;
 
-// Main simulation function
+// Main simulation function called from JavaScript
 #[wasm_bindgen]
 pub fn simulate_and_plot(
     params: SimulationParameters,
@@ -32,4 +42,3 @@ pub fn simulate_and_plot(
     // 4. Return simulation data to JavaScript for animation
     Ok(to_value(&result)?)
 }
-

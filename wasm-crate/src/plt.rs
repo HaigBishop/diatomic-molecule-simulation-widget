@@ -1,9 +1,23 @@
+/*
+Module for rendering plots of simulation results using Plotters and WebAssembly.
+
+Contains:
+ - Functions:
+    - render_energy_plot: renders a plot of potential, kinetic, and total energy over time
+        - Takes a SimulationResult and a canvas ID
+        - Uses Plotters to draw the energy data on a specified HTML canvas
+    - render_displacement_plot: renders a plot of displacement over time
+        - Takes a SimulationResult and a canvas ID
+        - Uses Plotters to draw the displacement data on a specified HTML canvas
+*/
+
 use wasm_bindgen::prelude::*;
 use web_sys::HtmlCanvasElement;
 use plotters::prelude::*;
 use plotters_canvas::CanvasBackend;
+
+// Import the SimulationResult type (holds simulated data)
 use crate::sim::SimulationResult;
-use crate::log;
 
 // Function to render the energy plot
 pub fn render_energy_plot(result: &SimulationResult, canvas_id: &str) -> Result<(), JsValue> {
@@ -96,7 +110,6 @@ pub fn render_energy_plot(result: &SimulationResult, canvas_id: &str) -> Result<
     root.present()
         .map_err(|e| JsValue::from_str(&format!("Cannot present chart: {}", e)))?;
     
-    log(&format!("Energy plot rendered to canvas: {}", canvas_id));
     Ok(())
 }
 
@@ -158,6 +171,5 @@ pub fn render_displacement_plot(result: &SimulationResult, canvas_id: &str) -> R
     root.present()
         .map_err(|e| JsValue::from_str(&format!("Cannot present chart: {}", e)))?;
     
-    log(&format!("Displacement plot rendered to canvas: {}", canvas_id));
     Ok(())
 }
