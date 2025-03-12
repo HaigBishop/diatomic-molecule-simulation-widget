@@ -234,6 +234,30 @@ pub struct SimulationResult {
     pub total_energies: Vec<f64>,    // Total energies at each time point
 }
 
+impl SimulationResult {
+    pub fn subsample(self, threshold_samples: usize, target_samples: usize) -> SimulationResult {
+        // Returns a new SimulationResult with data subsampled if the number of samples exceeds `threshold_samples`.
+        // # Arguments
+        // - `threshold_samples`: Only subsample if the number of samples is greater than this value.
+        // - `target_samples`: The approximate number of samples to retain after subsampling.
+        let n_samples = self.times.len();
+        // Only subsample if there are more than `threshold_samples` samples.
+        if n_samples <= threshold_samples {
+            return self;
+        }
+        let step = ((n_samples as f64) / (target_samples as f64)).ceil() as usize;
+        
+        SimulationResult {
+            times: self.times.into_iter().step_by(step).collect(),
+            displacements: self.displacements.into_iter().step_by(step).collect(),
+            distances: self.distances.into_iter().step_by(step).collect(),
+            potential_energies: self.potential_energies.into_iter().step_by(step).collect(),
+            kinetic_energies: self.kinetic_energies.into_iter().step_by(step).collect(),
+            total_energies: self.total_energies.into_iter().step_by(step).collect(),
+        }
+    }
+}
+
 // Function to generate synthetic simulation data
 pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
     // Get properties for the selected element
@@ -259,7 +283,8 @@ pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
         _ => panic!("Unsupported model: {}", model),
     };
     
-    sim_result
+    // Subsample if needed (e.g., threshold 8000 samples, targeting 2000)
+    sim_result.subsample(8000, 2000)
 }
 
 // Function to simulate the harmonic oscillator model

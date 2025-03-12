@@ -174,7 +174,7 @@ class SimulationUI {
                 'displacement-canvas'
             );
             
-            console.log('Simulation completed:', result);
+            console.log('Simulation completed:', result);         
             
             // Store the simulation result and start the animation
             this.simulationResult = result;
