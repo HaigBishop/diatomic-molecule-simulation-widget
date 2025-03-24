@@ -156,6 +156,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "diatomic-molecule-simulation-widget"
+version = "1.0.0"
+dependencies = [
+ "plotters",
+ "plotters-canvas",
+ "serde",
+ "serde-wasm-bindgen",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "dirs"
 version = "5.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -773,18 +785,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a05d73b933a847d6cccdda8f838a22ff101ad9bf93e33684f39c1f5f0eece3d"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "wasm-crate"
-version = "0.1.0"
-dependencies = [
- "plotters",
- "plotters-canvas",
- "serde",
- "serde-wasm-bindgen",
- "wasm-bindgen",
- "web-sys",
 ]
 
 [[package]]
