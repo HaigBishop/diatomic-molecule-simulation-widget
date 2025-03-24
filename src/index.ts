@@ -28,6 +28,9 @@ class SimulationUI {
     private timestepInput: HTMLInputElement;
     private temperatureInput: HTMLInputElement;
     
+    // Add a new property for the error message element
+    private errorMessageElement: HTMLElement;
+    
     // Animation properties
     private animationCanvas: HTMLCanvasElement;
     private animationContext: CanvasRenderingContext2D | null;
@@ -44,6 +47,9 @@ class SimulationUI {
         this.temperatureInput = document.getElementById('temperature') as HTMLInputElement;
         this.animationCanvas = document.getElementById('animation-canvas') as HTMLCanvasElement;
         this.animationContext = this.animationCanvas.getContext('2d');
+        
+        // Get reference to the error message element
+        this.errorMessageElement = document.getElementById('error-message') as HTMLElement;
         
         // Set up all the UI controls
         this.setupControls();
@@ -146,9 +152,23 @@ class SimulationUI {
         }
     }
     
+    // Methods to show and hide error messages
+    private showError(message: string): void {
+        this.errorMessageElement.textContent = message;
+        this.errorMessageElement.classList.remove('hidden');
+    }
+    
+    private hideError(): void {
+        this.errorMessageElement.textContent = '';
+        this.errorMessageElement.classList.add('hidden');
+    }
+    
     // Method to run the simulation with current parameter values
     private runSimulation() {
         try {
+            // Hide any previous error message
+            this.hideError();
+            
             console.log('Running simulation with current parameters...');
             
             // Get current values from UI controls
@@ -181,12 +201,27 @@ class SimulationUI {
             this.startAnimation();
             
         } catch (error) {
+            // Display the error message to the user
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.showError(`Simulation failed: ${errorMessage}`);
             console.error('Error running simulation:', error);
+            
+            // Clear any previous simulation result
+            this.simulationResult = null;
+            
+            // Cancel any ongoing animation
+            if (this.animationFrameId !== null) {
+                cancelAnimationFrame(this.animationFrameId);
+                this.animationFrameId = null;
+            }
         }
     }
     
     // Start the animation loop
     private startAnimation() {
+        // Only start animation if we have simulation results
+        if (!this.simulationResult) return;
+        
         // Cancel any existing animation
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);

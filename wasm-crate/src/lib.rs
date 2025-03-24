@@ -31,7 +31,7 @@ pub fn simulate_and_plot(
     displacement_canvas_id: &str
 ) -> Result<JsValue, JsValue> {
     // 1. Run simulation based on parameters
-    let result = sim::simulate_molecule(&params);
+    let result = sim::simulate_molecule(&params)?;
     
     // 2. Render energy plot
     plt::render_energy_plot(&result, energy_canvas_id)?;

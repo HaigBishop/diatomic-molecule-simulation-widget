@@ -14,6 +14,7 @@
     <div id="app">
       <h1>Diatomic Simulation</h1>
       <p class="subtitle">A simple interactive tool to simulate diatomic molecules in 1D</p>
+      
       <div class="controls">
         <div class="control-group">
           <label for="model">Model:</label>
@@ -30,6 +31,7 @@
             <option value="H">Hydrogen (H)</option>
             <option value="Ar">Argon (Ar)</option>
             <option value="Hg">Mercury (Hg)</option>
+            <option value="He">Helium (He)</option>
           </select>
         </div>
 
@@ -51,6 +53,8 @@
           <span class="value-display" id="temperature-value"></span>
         </div>
       </div>
+      
+      <div id="error-message" class="error-message hidden"></div>
 
       <div class="visualization">
         <div id="animation-container">

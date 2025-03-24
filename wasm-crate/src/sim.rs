@@ -82,11 +82,12 @@ const ELEMENT_PROPERTIES: &[(&str, ElementProperties)] = &[
 ];
 
 // Helper function to get element properties
-fn get_element_properties(element: &str) -> Option<ElementProperties> {
+fn get_element_properties(element: &str) -> Result<ElementProperties, JsValue> {
     ELEMENT_PROPERTIES
         .iter()
         .find(|(symbol, _)| *symbol == element)
         .map(|(_, props)| *props)
+        .ok_or_else(|| JsValue::from_str("Element not supported"))
 }
 
 // Define parameter struct for simulation settings
@@ -259,11 +260,10 @@ impl SimulationResult {
 }
 
 // Function to generate synthetic simulation data
-pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
-    // Get properties for the selected element
-    let properties = get_element_properties(&params.element())
-        .expect("Element not supported");
-
+pub fn simulate_molecule(params: &SimulationParameters) -> Result<SimulationResult, JsValue> {
+    // Get properties for the selected element (propagate error if not found)
+    let properties = get_element_properties(&params.element())?;
+    
     // Get the model and run the appropriate simulation
     let model = params.model();
     
@@ -280,11 +280,11 @@ pub fn simulate_molecule(params: &SimulationParameters) -> SimulationResult {
             let initial_sim_state = SimulationState::init_lennard_jones(properties, params.temperature());
             simulate_lennard_jones(initial_sim_state, params)
         },
-        _ => panic!("Unsupported model: {}", model),
+        _ => return Err(JsValue::from_str(&format!("Unsupported model: {}", model))),
     };
     
-    // Subsample if needed (e.g., threshold 8000 samples, targeting 2000)
-    sim_result.subsample(8000, 2000)
+    // Return the (subsampled) simulation result
+    Ok(sim_result.subsample(8000, 2000))
 }
 
 // Function to simulate the harmonic oscillator model
