@@ -31,9 +31,12 @@ cd ..
 // Run app
 npm run dev
 
-(added commands to scripts in package.json)
+// Compile Rust wasm
+npm run wasm-build
 
 // Compile Rust wasm AND run app
 npm run start 
+
+(added some commands to scripts in package.json)
 
 

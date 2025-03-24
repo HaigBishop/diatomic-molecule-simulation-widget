@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "wasm-build": "wasm-pack build wasm-crate --target web --out-dir ../public/wasm",
-    "start": "npm run wasm-build && npm run dev"
+    "build-wasm": "wasm-pack build wasm-crate --target web --out-dir ../public/wasm",
+    "start": "npm run build-wasm && npm run dev"
   },
   "devDependencies": {
     "typescript": "~5.7.2",
